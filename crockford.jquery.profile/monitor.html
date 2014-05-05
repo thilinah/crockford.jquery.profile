@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<script src="//code.highcharts.com/highcharts.js"></script>
+<script src="//code.highcharts.com/modules/exporting.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+
+$(document).ready(function (){
+	setInterval(function(){
+		getDataForTable('methods');	
+		getDataForTable('actions');	
+		getDataForTable('actionCallbacks');	
+	}, 1000);
+});
+
+function logMessage(){
+
+}
+
+function getDataForTable(table){
+	data = window.opener.getData(table);
+	for(index in data){
+		updateTable($("#"+table),index,data[index]);	
+	}
+}
+
+function cleanId(name){
+	name = name.replace(/,/g,"_");	
+	return name;
+}
+
+function animateColor(oldVal, newVal, ele, color){
+	if(oldVal != newVal){
+		var origColor = ele.css('color');
+		ele.css('color',color);
+		ele.animate({
+		    color: origColor
+		}, 1000);
+	}	
+}
+
+
+
+function updateTable($table,row,values){
+	row = cleanId(row);
+	var str;
+	$element = $table.find("#"+row);
+	if($element.length == 0){
+		str = '<tr id="__name__"><td id="name__name__"></td></tr>';
+		str = str.replace(/__name__/g,row);
+		$element = $(str);
+		$table.find('tbody').append($element);
+		animateColor(0,1,$element,"#F0E68C");
+	}
+	
+	$element.find("#name"+row).html(row);
+	
+	
+	for(index in values){
+		var entry = values[index];
+		$td = $element.find("#"+entry.name+row);
+		if($td.length == 0){
+			str = '<td id="'+entry.name+row+'"></td>';	
+			$td = $(str);
+			$element.append($td);
+			animateColor(0,1,$td,"#F0E68C");
+		}
+		
+		var oldVal = $td.html();
+		$td.html(entry.value);
+		
+		animateColor(oldVal,entry.value,$td,"#DC143C");
+	}
+}
+
+</script>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#actionsTab" data-toggle="tab">Ajax Actions</a></li>
+  <li><a href="#actionCallbacksTab" data-toggle="tab">Ajax Action Callbacks</a></li>
+  <li><a href="#methodsTab" data-toggle="tab">JS Methods</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="actionsTab">
+  		<table id="actions" class="table table-striped">
+		  <thead>
+		    <tr>
+		      <th>Action</th>
+		      <th>Last Call (time in ms)</th>
+		      <th>All Calls (time in ms)</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    
+		  </tbody>
+		</table>
+  </div>
+  <div class="tab-pane" id="actionCallbacksTab">
+  		<table id="actionCallbacks" class="table table-striped">
+		  <thead>
+		    <tr>
+		      <th>Action Callback</th>
+		      <th>Last Call (time in ms)</th>
+		      <th>All Calls (time in ms)</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    
+		  </tbody>
+		</table>
+  </div>
+  <div class="tab-pane" id="methodsTab">
+  		<table id="methods" class="table table-striped">
+		  <thead>
+		    <tr>
+		      <th>Method</th>
+		      <th>Last Call (time in ms)</th>
+		      <th>All Calls (time in ms)</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    
+		  </tbody>
+		</table>
+  </div>
+</div>
+
+
+</body>
+</html>
